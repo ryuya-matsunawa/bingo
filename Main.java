@@ -9,8 +9,6 @@ import java.util.Random;
 public class Main {
     // 穴が空いた時の文字列
     public static final String LINE = "[0, 0, 0, 0, 0]";
-    // 斜めチェック用のMap
-    public static Map<Integer, List<Integer>> crossNums = new HashMap<Integer, List<Integer>>();
     // 抽選番号の上限
     public static final int MAX_NUM = 75;
     public static Random rand = new Random();
@@ -18,8 +16,6 @@ public class Main {
     public static void main(String[] args) {
         // ビンゴカード作成
         int[][] bingo = makeBingoCard();
-        // 斜めチェック用のMap作成
-        crossNums = makeCrossNums();
         // 抽選回数用のカウント
         int count = 0;
         // 1~75までのList
@@ -145,6 +141,7 @@ public class Main {
             crossNums.put(i, list);
             crossNums.put(4 - i, list);
         }
+        System.out.println(crossNums);
         return crossNums;
     }
 
@@ -168,7 +165,7 @@ public class Main {
      * @return ビンゴしているかどうか
      */
     public static boolean checkRow(int[][] bingo, int row) {
-        return LINE.equals(Arrays.toString(bingo[row]));
+        return checkLine(Arrays.toString(bingo[row]));
     }
 
     /**
@@ -183,7 +180,7 @@ public class Main {
         for (int i = 0; i < 5; i++) {
             currentNums[i] = bingo[i][column];
         }
-        return LINE.equals(Arrays.toString(currentNums));
+        return checkLine(Arrays.toString(currentNums));
     }
 
     /**
@@ -196,27 +193,50 @@ public class Main {
      */
     public static boolean checkCross(int[][] bingo, int row, int column) {
         // 空いたマスが斜めに関連していなければfalseを返す
-        if (!isTargetRowColumn(row, column)) {
+        if (row == column) {
+            return checkRightBottomCross(bingo);
+        } else if (row == 4 - column) {
+            return checkRightTopCross(bingo);
+        } else {
             return false;
         }
-        int[] rightBottom = new int[5];
-        int[] leftBottom = new int[5];
-        for (int i = 0; i < 5; i++) {
-            rightBottom[i] = bingo[i][i];
-            leftBottom[i] = bingo[4 - i][i];
-        }
-        return LINE.equals(Arrays.toString(rightBottom)) || LINE.equals(Arrays.toString(leftBottom));
     }
 
     /**
-     * 空いたマスが斜めに関連しているかどうか
+     * 右下斜めでビンゴしているかどうか
      * 
-     * @param row    空いたマスの行番号
-     * @param column 空いたマスの列番号
-     * @return 空いたマスが斜めに関連しているかどうか
+     * @param bingo
+     * @return ビンゴしているかどうか
      */
-    public static boolean isTargetRowColumn(int row, int column) {
-        return crossNums.get(row).contains(column);
+    public static boolean checkRightBottomCross(int[][] bingo) {
+        int[] rightBottomCross = new int[5];
+        for (int i = 0; i < 5; i++) {
+            rightBottomCross[i] = bingo[i][i];
+        }
+        return checkLine(Arrays.toString(rightBottomCross));
+    }
+
+    /**
+     * 右上斜めでビンゴしているかどうか
+     * 
+     * @param bingo
+     * @return ビンゴしているかどうか
+     */
+    public static boolean checkRightTopCross(int[][] bingo) {
+        int[] rightTopCross = new int[5];
+        for (int i = 0; i < 5; i++) {
+            rightTopCross[i] = bingo[4 - i][i];
+        }
+        return checkLine(Arrays.toString(rightTopCross));
+    }
+
+    /**
+     * 一行がビンゴしているかどうか
+     * 
+     * @param line 一行分の文字列
+     * @return ビンゴしているかどうか
+     */
+    public static boolean checkLine(String line) {
+        return LINE.equals(line);
     }
 }
-
