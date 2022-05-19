@@ -88,8 +88,6 @@ public class Main {
     public static List<Integer> makeRandomNumber(int start, int end, int count) {
         // 数字範囲のList
         List<Integer> list = new ArrayList<Integer>();
-        // 返却用のList
-        List<Integer> result = new ArrayList<Integer>();
         for (int i = start; i <= end; i++) {
             list.add(i);
         }
@@ -98,6 +96,8 @@ public class Main {
             Collections.shuffle(list);
             return list;
         } else {
+            // 返却用のList
+            List<Integer> result = new ArrayList<Integer>();
             for (int j = 0; j < count; j++) {
                 // listの長さを取得
                 int remainingCount = list.size();
