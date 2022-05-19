@@ -1,9 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class Main {
@@ -122,30 +120,6 @@ public class Main {
     }
 
     /**
-     * 斜めチェック用のマスの組み合わせを作成する
-     * 
-     * @return crossNums
-     */
-    public static Map<Integer, List<Integer>> makeCrossNums() {
-        // 0: [0,4]
-        // 1: [1,3]
-        // 2: [2]
-        // 3: [1,3]
-        // 4: [0,4]
-        // 上記のMapを作る
-        Map<Integer, List<Integer>> crossNums = new HashMap<>();
-        for (int i = 0; i < 5; i++) {
-            List<Integer> list = new ArrayList<>();
-            list.add(i);
-            list.add(4 - i);
-            crossNums.put(i, list);
-            crossNums.put(4 - i, list);
-        }
-        System.out.println(crossNums);
-        return crossNums;
-    }
-
-    /**
      * 縦横斜めのどれかでビンゴしているかどうか
      * 
      * @param bingo  ビンゴカード
@@ -193,41 +167,16 @@ public class Main {
      */
     public static boolean checkCross(int[][] bingo, int row, int column) {
         // 空いたマスが斜めに関連していなければfalseを返す
-        if (row == column) {
-            return checkRightBottomCross(bingo);
-        } else if (row == 4 - column) {
-            return checkRightTopCross(bingo);
+        if (row == column || row == 4 - column) {
+            int[] cross = new int[5];
+            for (int i = 0; i < 5; i++) {
+                int j = row == column ? i : 4 - i;
+                cross[i] = bingo[j][i];
+            }
+            return checkLine(Arrays.toString(cross));
         } else {
             return false;
         }
-    }
-
-    /**
-     * 右下斜めでビンゴしているかどうか
-     * 
-     * @param bingo
-     * @return ビンゴしているかどうか
-     */
-    public static boolean checkRightBottomCross(int[][] bingo) {
-        int[] rightBottomCross = new int[5];
-        for (int i = 0; i < 5; i++) {
-            rightBottomCross[i] = bingo[i][i];
-        }
-        return checkLine(Arrays.toString(rightBottomCross));
-    }
-
-    /**
-     * 右上斜めでビンゴしているかどうか
-     * 
-     * @param bingo
-     * @return ビンゴしているかどうか
-     */
-    public static boolean checkRightTopCross(int[][] bingo) {
-        int[] rightTopCross = new int[5];
-        for (int i = 0; i < 5; i++) {
-            rightTopCross[i] = bingo[4 - i][i];
-        }
-        return checkLine(Arrays.toString(rightTopCross));
     }
 
     /**
