@@ -10,47 +10,48 @@ public class Main {
     // 抽選番号の上限
     public static final int MAX_NUM = 75;
     public static Random rand = new Random();
+    public static List<Integer> list = new ArrayList<Integer>();
 
     public static void main(String[] args) {
         // ビンゴカード作成
         int[][] bingo = makeBingoCard();
-        // 抽選回数用のカウント
-        int count = 0;
         // 1~75までのList
-        List<Integer> list = makeRandomNumber(1, MAX_NUM, 75);
-        // ビンゴスタート
-        bingoGame: for (int i = 0; i < list.size(); i++) {
-            // 抽選番号
-            int num = list.get(i);
-            // 1~15までなら一列目だけ確認する
-            int column = (num - 1) / 15;
-            bingoCheck: for (int row = 0; row < 5; row++) {
-                // 穴が空いている場所はチェックしない
-                if (bingo[row][column] > 0) {
-                    // 抽選番号と一致しているか
-                    if (bingo[row][column] == num) {
-                        // 一致していたところを0にする
-                        bingo[row][column] = 0;
-                        // 一致していたマスの縦横斜めでビンゴしているかチェックする
-                        if (checkBingo(bingo, row, column)) {
-                            System.out.println(row);
-                            System.out.println(column);
-                            // ビンゴしていれば抽選回数をセットする
-                            count = i;
-                            // bingoGameのfor文を抜ける
-                            break bingoGame;
-                        }
-                        // 一致していたマス以降はチェック不要なのでbingoCheckのfor文を抜ける
-                        break bingoCheck;
-                    }
+        list = makeRandomNumber(1, MAX_NUM, MAX_NUM);
+        startBingo(bingo, 0, 0);
+    }
+
+    /**
+     * ビンゴを開始する
+     * 
+     * @param bingo
+     * @param row
+     * @param index
+     */
+    private static void startBingo(int[][] bingo, int row, int index) {
+        int num = list.get(index);
+        int column = (num - 1) / 15;
+        if (bingo[row][column] == num) {
+            bingo[row][column] = 0;
+            if (checkBingo(bingo, row, column)) {
+                System.out.println(row);
+                System.out.println(column);
+                int count = index + 1;
+                // 抽選回数を出力
+                System.out.println("抽選回数： " + count);
+                // ビンゴカードを一行ずつ出力
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(Arrays.toString(bingo[i]));
                 }
+                return;
+            } else {
+                startBingo(bingo, 0, index + 1);
             }
-        }
-        // 抽選回数を出力
-        System.out.println("抽選回数： " + count);
-        // ビンゴカードを一行ずつ出力
-        for (int i = 0; i < 5; i++) {
-            System.out.println(Arrays.toString(bingo[i]));
+        } else {
+            if (row == 4) {
+                startBingo(bingo, 0, index + 1);
+            } else {
+                startBingo(bingo, row + 1, index);
+            }
         }
     }
 
