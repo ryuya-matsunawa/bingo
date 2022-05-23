@@ -8,7 +8,7 @@ def main():
     bingoCard = makeBingoCard()
     for row in bingoCard:
         print(row)
-    startBingo(bingoCard, 0, 0)
+    startBingo(bingoCard, 0)
 
 
 def makeBingoCard():
@@ -19,23 +19,22 @@ def makeBingoCard():
     return bingoCard
 
 
-def startBingo(bingoCard, row, index):
+def startBingo(bingoCard, index):
     num = lotteryNumber[index]
     column = (num - 1) // 15
-    if (bingoCard[row][column] == num):
-        bingoCard[row][column] = 0
-        if (checkBingo(bingoCard, row, column)):
-            print('抽選回数：' + str(index+1))
-            for row in bingoCard:
-                print(row)
-            return
-        else:
-            startBingo(bingoCard, 0, index+1)
+    for row in range(5):
+        if (bingoCard[row][column] == num):
+            bingoCard[row][column] = 0
+            if (checkBingo(bingoCard, row, column)):
+                print('抽選回数：' + str(index+1))
+                for row in bingoCard:
+                    print(row)
+                return
+            else:
+                startBingo(bingoCard, index + 1)
+                break
     else:
-        if (row == 4):
-            startBingo(bingoCard, 0, index + 1)
-        else:
-            startBingo(bingoCard, row+1, index)
+        startBingo(bingoCard, index + 1)
 
 
 def checkBingo(bingoCard, row, column):

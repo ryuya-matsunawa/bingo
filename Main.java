@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
-    // 穴が空いた時の文字列
-    public static final String LINE = "[0, 0, 0, 0, 0]";
+    // 穴が空いた時の配列
+    public static final int[] nums = { 0, 0, 0, 0, 0 };
     // 抽選番号の上限
     public static final int MAX_NUM = 75;
     public static Random rand = new Random();
@@ -17,42 +17,39 @@ public class Main {
         int[][] bingo = makeBingoCard();
         // 1~75までのList
         list = makeRandomNumber(1, MAX_NUM, MAX_NUM);
-        startBingo(bingo, 0, 0);
+        startBingo(bingo, 0);
     }
 
     /**
      * ビンゴを開始する
      * 
      * @param bingo
-     * @param row
      * @param index
+     * @return
      */
-    private static void startBingo(int[][] bingo, int row, int index) {
+    private static Object startBingo(int[][] bingo, int index) {
         int num = list.get(index);
         int column = (num - 1) / 15;
-        if (bingo[row][column] == num) {
-            bingo[row][column] = 0;
-            if (checkBingo(bingo, row, column)) {
-                System.out.println(row);
-                System.out.println(column);
-                int count = index + 1;
-                // 抽選回数を出力
-                System.out.println("抽選回数： " + count);
-                // ビンゴカードを一行ずつ出力
-                for (int i = 0; i < 5; i++) {
-                    System.out.println(Arrays.toString(bingo[i]));
+        for (int row = 0; row < 5; row++) {
+            if (bingo[row][column] == num) {
+                bingo[row][column] = 0;
+                if (checkBingo(bingo, row, column)) {
+                    System.out.println(row);
+                    System.out.println(column);
+                    int count = index + 1;
+                    // 抽選回数を出力
+                    System.out.println("抽選回数： " + count);
+                    // ビンゴカードを一行ずつ出力
+                    for (int i = 0; i < 5; i++) {
+                        System.out.println(Arrays.toString(bingo[i]));
+                    }
+                    return null;
+                } else {
+                    return startBingo(bingo, index + 1);
                 }
-                return;
-            } else {
-                startBingo(bingo, 0, index + 1);
-            }
-        } else {
-            if (row == 4) {
-                startBingo(bingo, 0, index + 1);
-            } else {
-                startBingo(bingo, row + 1, index);
             }
         }
+        return startBingo(bingo, index + 1);
     }
 
     /**
@@ -140,7 +137,7 @@ public class Main {
      * @return ビンゴしているかどうか
      */
     public static boolean checkRow(int[][] bingo, int row) {
-        return checkLine(Arrays.toString(bingo[row]));
+        return Arrays.equals(nums, bingo[row]);
     }
 
     /**
@@ -155,7 +152,7 @@ public class Main {
         for (int i = 0; i < 5; i++) {
             currentNums[i] = bingo[i][column];
         }
-        return checkLine(Arrays.toString(currentNums));
+        return Arrays.equals(nums, currentNums);
     }
 
     /**
@@ -174,19 +171,9 @@ public class Main {
                 int j = row == column ? i : 4 - i;
                 cross[i] = bingo[j][i];
             }
-            return checkLine(Arrays.toString(cross));
+            return Arrays.equals(nums, cross);
         } else {
             return false;
         }
-    }
-
-    /**
-     * 一行がビンゴしているかどうか
-     * 
-     * @param line 一行分の文字列
-     * @return ビンゴしているかどうか
-     */
-    public static boolean checkLine(String line) {
-        return LINE.equals(line);
     }
 }
