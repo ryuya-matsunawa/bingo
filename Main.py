@@ -27,13 +27,13 @@ def startBingo(bingoCard, index):
             bingoCard[row][column] = 0
             if (checkBingo(bingoCard, row, column)):
                 print('抽選回数：' + str(index+1))
+                print(row, column)
                 for row in bingoCard:
                     print(row)
                 return
             else:
                 return startBingo(bingoCard, index + 1)
-    else:
-        return startBingo(bingoCard, index + 1)
+    return startBingo(bingoCard, index + 1)
 
 
 def checkBingo(bingoCard, row, column):
