@@ -31,10 +31,9 @@ def startBingo(bingoCard, index):
                     print(row)
                 return
             else:
-                startBingo(bingoCard, index + 1)
-                break
+                return startBingo(bingoCard, index + 1)
     else:
-        startBingo(bingoCard, index + 1)
+        return startBingo(bingoCard, index + 1)
 
 
 def checkBingo(bingoCard, row, column):
